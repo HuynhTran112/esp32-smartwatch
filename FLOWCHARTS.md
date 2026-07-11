@@ -1,52 +1,48 @@
-# Tài liệu Giải thích các Lưu đồ Giải thuật Con (Sub-flowcharts)
+# Sub-system Flowcharts Explanation
 
-Tài liệu này giải thích chi tiết nguyên lý hoạt động của các lưu đồ con (được thiết kế bằng Draw.io) của các hệ thống cảm biến và định vị trên Smartwatch, phục vụ cho việc lưu trữ và giới thiệu năng lực thiết kế phần mềm nhúng.
+This document explains the algorithms and logic shown in the sub-flowchart diagrams (designed via Draw.io) for the smartwatch sensors, fitness tracking, and GPS routing.
 
 ---
 
-## 1. Hệ thống cảm biến chuyển động & Đếm bước (IMU BMI270)
+## 1. Motion & Health Hardware Drivers
 
-### 📌 1.1. Lưu đồ hoạt động của IMU BMI270
+### 📌 1.1. IMU BMI270 Core Driver
 ![IMU Flowchart](./docs/images/1.8.2.IMU.drawio%20(6).png)
 
-* **Mô tả:** Khởi tạo cảm biến gia tốc BMI270 thông qua đường truyền I2C Port 1. Cấu hình các thanh ghi ngắt (Interrupt Registers) để tự động phát hiện chuyển động (Any-motion) và cấu hình tính năng đếm bước phần cứng tích hợp trong chip để giảm tải cho CPU chính của ESP32-S3.
+* **Description:** Initializes the 6-axis BMI270 sensor (accelerometer & gyroscope) via the shared I2C Port 1. Configures internal interrupt registers for motion detection (Any-motion) and enables the sensor's hardware-based step detection to offload calculations from the ESP32-S3 CPU.
 
-### 📌 1.2. Lưu đồ giải thuật đếm bước chân (Step Counter)
-![Step Counter Flowchart](./docs/images/1.8.2.1.Step_counter.drawio%20(14).png)
-
-* **Mô tả:** Khi có ngắt chuyển động từ chân `IMU_INT` (GPIO 20), tác vụ đếm bước sẽ được kích hoạt để đọc dữ liệu số bước từ thanh ghi của BMI270. Dữ liệu này sau đó sẽ được lọc, lưu vào bộ nhớ tạm thời và chuẩn bị đồng bộ qua Bluetooth LE.
-
-### 📌 1.3. Lưu đồ tính quãng đường (Distance Calculation)
-![Distance Flowchart](./docs/images/1.8.2.2.Distance_count.drawio%20(7).png)
-
-* **Mô tả:** Tính toán quãng đường di chuyển ($S$) dựa trên số bước chân thực tế nhân với chiều dài bước chân trung bình của người dùng (được cấu hình trước trên ứng dụng điện thoại), hoặc kết hợp dữ liệu GPS ngoài trời để tăng độ chính xác của lộ trình.
-
----
-
-## 2. Cảm biến Sức khỏe & Tính toán chỉ số sinh hiệu (MAX30102)
-
-### 📌 2.1. Lưu đồ quản lý cảm biến MAX30102
+### 📌 1.2. Pulse Oximeter MAX30102 Driver
 ![MAX30102 Flowchart](./docs/images/1.8.3.MAX30102.drawio%20(6).png)
 
-* **Mô tả:** Khởi tạo cảm biến nhịp tim/SpO2 MAX30102 qua I2C Port 1, cấu hình dòng phát của hai bóng LED (Red và IR) cùng tần số lấy mẫu. Sử dụng chân ngắt `HR_INT` (GPIO 13) để báo hiệu cho ESP32-S3 đọc bộ đệm FIFO 32 mẫu của cảm biến mỗi khi đầy dữ liệu.
+* **Description:** Initializes the MAX30102 heart rate & pulse oximetry sensor over I2C Port 1. Configures LED drive currents (Red and IR channels) and sampling rates. Pins the `HR_INT` interrupt pin (GPIO 13) to wake the ESP32-S3 to read the 32-sample internal FIFO queue whenever new measurements are ready.
 
-### 📌 2.2. Giải thuật đo nồng độ Oxy trong máu (SpO2 Algorithm)
-![SpO2 Flowchart](./docs/images/1.8.3.1.SpO2.drawio%20(5).png)
-
-* **Mô tả:** Thu thập mẫu ánh sáng phản xạ từ LED Red và IR. Tính toán thành phần một chiều (DC) và xoay chiều (AC) của cả hai kênh sáng, sau đó tính tỉ lệ hấp thụ $R$:
-  $$R = \frac{AC_{Red} / DC_{Red}}{AC_{IR} / DC_{IR}}$$
-  Từ tỉ lệ $R$, đối chiếu với bảng hiệu chuẩn thực nghiệm để xuất ra giá trị nồng độ Oxy trong máu $SpO_{2} (\%)$.
-
-### 📌 2.3. Giải thuật đo nhịp tim (Heart Rate Algorithm)
+### 📌 1.3. Heart Rate Calculation Algorithm
 ![Heart Rate Flowchart](./docs/images/1.8.3.2.Hearate.drawio%20(11).png)
 
-* **Mô tả:** Tín hiệu AC từ kênh ánh sáng phản xạ được đưa qua bộ lọc dải thông (Bandpass Filter) để loại bỏ nhiễu nhiễu tần số thấp (do rung tay) và tần số cao. Áp dụng giải thuật phát hiện đỉnh (Peak Detection) hoặc phân tích tần số để tính toán chu kỳ mạch đập và xuất ra chỉ số nhịp tim BPM (Beats-Per-Minute).
+* **Description:** Applies a software bandpass filter to the raw optical AC signal to suppress low-frequency motion artifacts and high-frequency noise. Detects signal peaks (Peak Detection) or analyzes frequencies to determine the pulse cycle and calculate the Beats-Per-Minute (BPM).
+
+### 📌 1.4. SpO2 (Blood Oxygen Saturation) Algorithm
+![SpO2 Flowchart](./docs/images/1.8.3.1.SpO2.drawio%20(5).png)
+
+* **Description:** Analyzes both Red and Infrared (IR) reflective channels. Extracts the AC amplitude and DC offset of both channels to compute the "ratio of ratios" $R$:
+  $$R = \frac{AC_{Red} / DC_{Red}}{AC_{IR} / DC_{IR}}$$
+  The $R$ value is matched against an empirical calibration table to output the blood oxygen saturation percentage ($SpO_2\%$).
 
 ---
 
-## 3. Hệ thống Định vị & Lưu trữ Hành trình (GPS GT-U8)
+## 2. GPS Navigation & Fitness Tracking
 
-### 📌 3.1. Lưu đồ xử lý dữ liệu GPS
+### 📌 2.1. GPS NMEA Data Processing
 ![GPS Flowchart](./docs/images/1.9.GPS_handle%20(2).drawio%20(7).png)
 
-* **Mô tả:** Nhận các chuỗi dữ liệu thô NMEA 0183 qua bộ thu UART 1. Giải mã các bản tin `$GPRMC` và `$GPGGA` để trích xuất tọa độ kinh/vĩ độ, tốc độ di chuyển hiện tại và thời gian thực chuẩn UTC. Tọa độ được ghi trực tiếp vào bộ nhớ flash (phân vùng SPIFFS) dưới dạng tệp tin log để đồng bộ vẽ bản đồ đường đi trên ứng dụng di động khi kết nối lại.
+* **Description:** Receives raw NMEA 0183 sentences via UART 1. Parses `$GPRMC` and `$GPGGA` sentences to extract GPS coordinates (Latitude/Longitude), velocity, and UTC time. Writes coordinates directly to the local SPIFFS partition in a path log file for companion app map synchronization.
+
+### 📌 2.2. Step Counter Algorithm
+![Step Counter Flowchart](./docs/images/1.8.2.1.Step_counter.drawio%20(14).png)
+
+* **Description:** Triggers when the IMU step interrupt fires. Reads step registers from the BMI270, filters data against time thresholds, updates the UI step telemetry, and packs data for BLE transmission.
+
+### 📌 2.3. Distance Calculation Logic
+![Distance Flowchart](./docs/images/1.8.2.2.Distance_count.drawio%20(7).png)
+
+* **Description:** Computes cumulative active distance ($S$) based on step count and user stride profile configuration, or calculates physical distance between successive GPS coordinates during outdoor walking/cycling sessions to log precise active metrics.
