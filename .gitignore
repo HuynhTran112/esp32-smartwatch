@@ -5,6 +5,9 @@ sdkconfig.old
 # Managed components (tải tự động, không cần commit)
 managed_components/
 
+# Agent config (nội bộ, không push lên GitHub)
+.agents/
+
 # Python cache
 __pycache__/
 *.pyc
