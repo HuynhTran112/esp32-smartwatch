@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "watch_settings.c"
+        "watch_activity_log.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        "drivers"
+        "nvs_flash"
+)

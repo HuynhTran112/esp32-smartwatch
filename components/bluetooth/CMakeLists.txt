@@ -1,0 +1,12 @@
+idf_component_register(
+    SRCS
+        "bluetooth_manager.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        "drivers"
+        "services"
+        "sensors"
+        "bt"
+        "nvs_flash"
+)

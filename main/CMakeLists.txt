@@ -4,5 +4,13 @@ idf_component_register(
     INCLUDE_DIRS
         "."
     REQUIRES
-        "watch"
+        "ui"
+        "bluetooth"
+        "sensors"
+        "network"
+        "services"
+        "drivers"
+        "nvs_flash"
+        "bt"
+        "esp_timer"
 )

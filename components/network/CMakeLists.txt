@@ -1,0 +1,19 @@
+idf_component_register(
+    SRCS
+        "network_state.c"
+        "ota_service.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        "drivers"
+        "services"
+        "nvs_flash"
+        "esp_https_ota"
+        "esp_http_client"
+        "app_update"
+        "mbedtls"
+        "spiffs"
+        "esp_wifi"
+        "esp_netif"
+        "esp_event"
+)

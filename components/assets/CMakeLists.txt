@@ -1,0 +1,27 @@
+idf_component_register(
+    SRCS
+        "angle_icon.c"
+        "arrow_1.c"
+        "arrow_2.c"
+        "bat_icon.c"
+        "ble.c"
+        "font_12.c"
+        "font_14.c"
+        "font_16.c"
+        "font_20.c"
+        "font_24.c"
+        "font_36.c"
+        "font_48.c"
+        "language_icon.c"
+        "menu_icon.c"
+        "menu_icon_2.c"
+        "signal_icon.c"
+        "sub_icon.c"
+        "wifi_16.c"
+        "wifi_24.c"
+        "workout_health_icon.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        "lvgl__lvgl"
+)

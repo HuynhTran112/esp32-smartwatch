@@ -1,0 +1,17 @@
+idf_component_register(
+    SRCS
+        "battery.c"
+        "imu.c"
+        "heart_rate.c"
+        "gps_parser.c"
+        "hardware_i2c_sensor.c"
+        "gps_tracker.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        "drivers"
+        "services"
+        "driver"
+        "nvs_flash"
+        "esp_timer"
+)
