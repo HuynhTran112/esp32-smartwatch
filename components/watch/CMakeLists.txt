@@ -1,0 +1,41 @@
+# Nested CMake Inclusion for watch component
+include(${CMAKE_CURRENT_LIST_DIR}/assets/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/bluetooth/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/drivers/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/network/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/sensors/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/services/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
+
+idf_component_register(
+    SRCS
+        ${assets_sources}
+        ${bluetooth_sources}
+        ${drivers_sources}
+        ${network_sources}
+        ${sensors_sources}
+        ${services_sources}
+        ${ui_sources}
+    INCLUDE_DIRS
+        "."
+        "bluetooth"
+        "drivers"
+        "network"
+        "services"
+        "sensors"
+        "ui"
+        "assets"
+    REQUIRES
+        "bt"
+        "nvs_flash"
+        "driver"
+        "esp_https_ota"
+        "esp_http_client"
+        "app_update"
+        "mbedtls"
+        "spiffs"
+        "lvgl__lvgl"
+        "espressif__esp_lvgl_port"
+        "espressif__esp_lcd_touch_cst816s"
+        "jbrilha__esp_lcd_st7789"
+)

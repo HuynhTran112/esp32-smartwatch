@@ -1,0 +1,33 @@
+menu "Smartwatch OTA"
+
+config OTA_FIRMWARE_URL
+    string "HTTPS firmware binary URL"
+    default ""
+    help
+        HTTPS URL pointing to the ESP-IDF application .bin used by OTA.
+        Leave empty to disable OTA from the UI.
+
+endmenu
+
+menu "Smartwatch BLE Security"
+
+config WATCH_BLE_PAIR_PASSKEY
+    int "BLE pairing static passkey"
+    range 0 999999
+    default 123456
+    help
+        Static 6-digit passkey used for BLE Secure Connections MITM pairing.
+        The phone must enter this passkey before encrypted GATT read/write is allowed.
+
+endmenu
+
+menu "Smartwatch Debug"
+
+config WATCH_HEAP_MONITOR
+    bool "Enable periodic heap monitor log"
+    default n
+    help
+        Logs heap, internal heap, and PSRAM every 30 seconds.
+        Keep disabled for production firmware.
+
+endmenu

@@ -1,0 +1,17 @@
+set(ui_sources
+    "ui/ui.c"
+    "ui/ui_alarm.c"
+    "ui/ui_apps.c"
+    "ui/ui_connect.c"
+    "ui/ui_health.c"
+    "ui/ui_icons.c"
+    "ui/ui_menu.c"
+    "ui/ui_navigation.c"
+    "ui/ui_notification_popup.c"
+    "ui/ui_shutdown_dialog.c"
+    "ui/ui_stopwatch.c"
+    "ui/ui_update.c"
+    "ui/ui_utils.c"
+    "ui/ui_watchface.c"
+    "ui/ui_wifi.c"
+)
