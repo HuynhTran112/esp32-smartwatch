@@ -16,9 +16,11 @@
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "sdkconfig.h"
-#include "bluetooth_manager.h"
 #include "network_state.h"
 #include "watch_settings.h"
+
+/* Forward declaration - tránh circular dependency với bluetooth component */
+extern esp_err_t watch_bluetooth_send_command(const char *command);
 
 #ifndef CONFIG_OTA_FIRMWARE_URL
 #define CONFIG_OTA_FIRMWARE_URL ""

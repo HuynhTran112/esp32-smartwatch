@@ -1,6 +1,5 @@
 #include "gps_tracker.h"
 #include "gps_parser.h"
-#include "hardware_i2c_sensor.h"
 #include "board_config.h"
 #include "watch_activity_log.h"
 

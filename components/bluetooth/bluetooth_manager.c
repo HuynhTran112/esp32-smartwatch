@@ -22,13 +22,16 @@
 #include "freertos/task.h"
 #include "ota_service.h"
 #include "gps_tracker.h"
-#include "ui_screens.h"
-#include "ui_notification_popup.h"
-#include "ui_utils.h"
 #include "watch_settings.h"
 #include "watch_activity_log.h"
 #include "sdkconfig.h"
 #include "esp_timer.h"
+
+/* Forward declarations - tránh circular dep bluetooth <-> ui */
+extern void ui_time_set_timezone_offset(int offset_minutes);
+extern void ui_notification_popup_show(const watch_bluetooth_notification_t *notif);
+extern void ui_quick_replies_clear_from_ble(void);
+extern void ui_quick_replies_add_from_ble(const char *reply);
 
 static const char *TAG = "BLE_NOTIFY";
 

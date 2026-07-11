@@ -3,7 +3,6 @@
 #include "hardware_i2c_sensor.h"
 #include "board_config.h"
 #include "gps_tracker.h"
-#include "bluetooth_manager.h"
 #include "esp_sleep.h"
 #include "esp_timer.h"
 
@@ -17,6 +16,7 @@
 #include "ui.h"
 #include "ui_navigation.h"
 #include "ui_screens.h"
+#include "bluetooth_manager.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"

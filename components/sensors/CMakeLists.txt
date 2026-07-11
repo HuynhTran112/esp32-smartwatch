@@ -4,7 +4,6 @@ idf_component_register(
         "imu.c"
         "heart_rate.c"
         "gps_parser.c"
-        "hardware_i2c_sensor.c"
         "gps_tracker.c"
     INCLUDE_DIRS
         "."

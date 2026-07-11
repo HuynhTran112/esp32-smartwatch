@@ -1,6 +1,7 @@
 idf_component_register(
     SRCS
         "app_main.c"
+        "../components/sensors/hardware_i2c_sensor.c"
     INCLUDE_DIRS
         "."
     REQUIRES
@@ -13,4 +14,5 @@ idf_component_register(
         "nvs_flash"
         "bt"
         "esp_timer"
+        "espressif__esp_lvgl_port"
 )

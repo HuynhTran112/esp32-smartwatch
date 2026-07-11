@@ -7,6 +7,7 @@ idf_component_register(
         "drivers"
         "services"
         "sensors"
+        "network"
         "bt"
         "nvs_flash"
 )
