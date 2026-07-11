@@ -92,6 +92,10 @@ D:\DATN\GPS\lvgl_project\
 ├── CMakeLists.txt              # Top-level build configuration
 ├── partitions_custom.csv       # Custom partitioning (app, spiffs, nvs)
 ├── sdkconfig                   # Project configuration settings
+├── main/
+│   ├── CMakeLists.txt          # Main component build configuration
+│   ├── Kconfig.projbuild       # Project configuration settings for menuconfig
+│   └── app_main.c              # System initialization, task management & RTOS setup
 └── components/
     ├── assets/                 # Graphics (angle, arrow, battery, wifi icons) and fonts (12px to 48px)
     ├── bluetooth/              # NimBLE BLE Manager, notification handler, navigation command sync
