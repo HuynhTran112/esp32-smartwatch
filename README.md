@@ -298,10 +298,15 @@ esp32-smartwatch/
 | PCB Preview | Watchface UI | Enclosure |
 | :---: | :---: | :---: |
 | ![PCB Preview](docs/images/smartwatch_pcb_preview.png) | ![UI Preview](docs/images/smartwatch_ui_preview.png) | ![Product Preview](docs/images/smartwatch_product_preview.png) |
+<p align="center">
+  <a href="https://youtu.be/B9uUKMm424g">
+    <img src="https://img.youtube.com/vi/B9uUKMm424g/maxresdefault.jpg" width="100%" alt="Demo Smartwatch">
+  </a>
+</p>
 
-🎥 **Demo video:** 
-[![Demo Smartwatch](https://img.youtube.com/vi/B9uUKMm424g/hqdefault.jpg)](https://youtu.be/B9uUKMm424g)
-
+<p align="center">
+  🎥 <b>Demo video</b> — Click vào ảnh để xem
+</p>
 ---
 
 ## 👥 Author Information
