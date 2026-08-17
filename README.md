@@ -299,7 +299,8 @@ esp32-smartwatch/
 | :---: | :---: | :---: |
 | ![PCB Preview](docs/images/smartwatch_pcb_preview.png) | ![UI Preview](docs/images/smartwatch_ui_preview.png) | ![Product Preview](docs/images/smartwatch_product_preview.png) |
 
-🎥 **Demo video:** [![Demo Smartwatch](https://img.youtube.com/vi/B9uUKMm424g/hqdefault.jpg)](https://youtu.be/B9uUKMm424g)
+🎥 **Demo video:** 
+[![Demo Smartwatch](https://img.youtube.com/vi/B9uUKMm424g/hqdefault.jpg)](https://youtu.be/B9uUKMm424g)
 
 ---
 
