@@ -55,9 +55,9 @@ A comprehensive wearable IoT solution utilizing **ESP32-S3** and **FreeRTOS** pa
   * **Walking Mode:** Tracks and displays step count and cumulative distance via BMI270 pedometer.
   * **Cycling Mode:** Tracks and displays speed and distance using autonomous GNSS data.
 * **Autonomous GPS Tracking:** Logs coordinates, speed, and paths to the local filesystem (SPIFFS), fully synced to the mobile app for route plotting on Google Maps.
-* **Health Dashboard:** Integrates MAX30102 for heart rate and blood oxygen saturation (SpO2) readings at 100 Hz.
+* **Health Dashboard:** Integrates MAX30102 for heart rate and blood oxygen saturation (SpO2) readings, sampled at 50 Hz (18-bit ADC resolution, 4096 nA range).
 * **Custom UI & Touch (LVGL):** High-priority GUI thread for smooth scrolling and swipe navigation on a 1.83" TFT display using CST816S capacitive touch.
-* **Ultra-Low Power Standby:** 25 uA deep-sleep current using PMOS power gating and dedicated 32.768 kHz external crystal RTC timekeeping.
+* **Ultra-Low Power Standby:** ~25 uA deep-sleep current, using ESP32-S3's native deep-sleep power domains (RTC peripheral kept alive for EXT1 wakeup on the power button) plus a dedicated 32.768 kHz external crystal for RTC timekeeping. Peripheral power cut-off (PMOS load switch) is a board-level circuit design, not something controlled from firmware.
 * **Power-saving OTA:** Local Wi-Fi is enabled *only* for Over-the-Air firmware updates to maximize battery life.
 
 ---
@@ -74,7 +74,9 @@ Quantitative measurements taken on the physical hardware prototype:
 | **Active Workout (GPS + HR + Screen ON)**| **~112 mA** | All sensors & GNSS receiver powered |
 | **Touch Wakeup Latency** | **~75 ms** | Touch INT falling edge to ST7789 Backlight ON |
 | **BLE Data Sync Latency** | **< 20 ms** | NimBLE GATT notification to Flutter UI update |
-| **LVGL Frame Refresh Rate** | **30 - 32 FPS** | Double-buffered partial render in SRAM |
+| **LVGL Frame Refresh Rate** | **30 - 32 FPS** | Double-buffered partial render, PSRAM or SRAM depending on free heap at boot (see [Memory Management](#-memory-management-psram-configuration)) |
+
+> Power figures above were taken with a Nordic Power Profiler Kit II on the physical prototype; timing figures (touch wakeup, BLE sync latency) were measured with logic/timestamp instrumentation rather than a dedicated oscilloscope. Re-run these measurements if the hardware revision or firmware changes, since sleep current in particular is sensitive to which peripherals are left powered.
 
 ---
 
@@ -177,14 +179,9 @@ flowchart TD
 
 To optimize the limited internal SRAM, the system splits memory allocations with the 2MB external PSRAM:
 
-* **PSRAM (2MB) is allocated for:**
-  * Pre-compiled images and custom fonts (`font_12.c` to `font_48.c`).
-  * GPS path buffers (high-capacity coordinate tables).
-  * OTA download stream chunks.
-* **PSRAM is NOT used for (kept in fast internal SRAM):**
-  * LVGL partial draw framebuffers (2 x 1/10 screen = 33 KB, ensures fast zero-wait DMA transfers).
-  * High-priority RTOS task stacks.
-  * Real-time variables (state machines, BLE callback variables).
+* **Always in PSRAM:** pre-compiled images and custom fonts (`font_12.c` to `font_48.c`), GPS path buffers, OTA download stream chunks.
+* **Always in fast internal SRAM:** high-priority RTOS task stacks, real-time variables (state machines, BLE callback variables).
+* **LVGL display buffer — adaptive, checked at boot:** `watch_lvgl_port_init()` first checks free PSRAM. If there's enough headroom, it allocates a larger buffer (48 display lines, double-buffered when PSRAM is especially plentiful) **in PSRAM** for smoother partial rendering. Only when free PSRAM is low does it fall back to a smaller buffer (1/10 screen) in internal SRAM. In other words, the display buffer prefers PSRAM when available rather than being pinned to SRAM — a pragmatic degrade-gracefully strategy rather than a fixed split.
 
 ---
 
@@ -311,7 +308,7 @@ esp32-smartwatch/
 * **UI Guard Watchdog Timer:** A dedicated software timer checks LVGL execution heartbeats every 10s. If the GUI thread stalls for more than 30s, the watch executes `esp_restart()` to prevent permanent lockup.
 * **BLE Auto-Reconnection:** The watch re-advertises immediately on connection drops so the companion app can restore telemetry streams seamlessly.
 * **Thread Safety:** Mutexes protect SPIFFS write channels during GPS log writes, preventing corruption from multi-task collisions.
-* **Bus Lockup Recovery:** Generates 9 clock pulses on SCL during boot to force-release any slave holding SDA low.
+* **Bus Lockup Recovery:** Whenever a sensor I2C transaction fails, the driver bit-bangs up to 9 clock pulses on SCL to force a stuck slave to release SDA, then re-initializes the bus. This runs reactively at runtime (not just once at boot), gated by a 30 s cooldown so a genuinely disconnected sensor doesn't spam the recovery routine.
 
 ---
 
