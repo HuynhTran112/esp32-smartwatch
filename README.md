@@ -28,21 +28,23 @@ A comprehensive wearable IoT solution utilizing **ESP32-S3** and **FreeRTOS** pa
 
 ## 📷 Demo & Gallery
 
-<p align="center">
-  <img src="docs/images/smartwatch_hero.png" alt="Smartwatch Hero Demo" width="600">
-</p>
+### ⌚ Smartwatch Hardware Prototype
+| Project Overview 1 | Project Overview 2 |
+| :---: | :---: |
+| <img src="img/hinh1.jpg" alt="Smartwatch Project Hardware 1" width="450"> | <img src="img/hinh2.jpg" alt="Smartwatch Project Hardware 2" width="450"> |
 
-### Hardware & UI Gallery
-
-| PCB Preview | Watchface UI | Enclosure 3D |
-| :---: | :---: | :---: |
-| ![PCB Preview](docs/images/smartwatch_pcb_preview.png) | ![UI Preview](docs/images/smartwatch_ui_preview.png) | ![Product Preview](docs/images/smartwatch_product_preview.png) |
+### 🔬 Custom PCB Design
+| Mặt Trước (Top Layer) | Mặt Sau (Bottom Layer) |
+| :---: | :---: |
+| <img src="img/mat_truoc.jpg" alt="Custom Smartwatch PCB Mặt Trước" width="450"> | <img src="img/mat_sau.jpg" alt="Custom Smartwatch PCB Mặt Sau" width="450"> |
 
 ### 🎥 Live Video Demo
 <p align="center">
-  <a href="https://youtu.be/B9uUKMm424g" target="_blank">
+  <a href="https://youtu.be/B9uUKMm424g" target="_blank" rel="noopener noreferrer">
     <img src="https://img.youtube.com/vi/B9uUKMm424g/maxresdefault.jpg" width="85%" alt="Smartwatch Live Video Demo">
   </a>
+  <br>
+  <em>▶️ <b>Watch Demonstration:</b> <a href="https://youtu.be/B9uUKMm424g" target="_blank" rel="noopener noreferrer">ESP32-S3 Smartwatch Live Video Demo</a></em>
 </p>
 
 ---
