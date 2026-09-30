@@ -86,64 +86,17 @@ Quantitative measurements taken on the physical hardware prototype:
 
 The firmware runs as two cooperating loops pinned to the ESP32-S3's dual cores: **Core 0** owns sensors, connectivity, and background services; **Core 1** owns the LVGL UI, touch input, and screen state machine.
 
-```mermaid
-flowchart TD
-    Start([Bắt đầu]) --> Core0([Core 0])
-    Start --> Core1([Core 1])
+### 📐 Sơ đồ khối hệ thống (System Architecture & Block Diagram)
 
-    %% ===== CORE 0: sensors & connectivity =====
-    subgraph C0["Core 0 — Sensors & Connectivity"]
-        Core0 --> InitVars[/Khai báo biến, khởi tạo cảm biến,<br/>giao thức và hệ thống/]
-        InitVars --> InitStatus[/Khởi tạo và vẽ thanh trạng thái/]
-        InitStatus --> LoopI2C[Xử lý các cảm biến I2C]
+<p align="center">
+  <img src="img/hinh3.png" alt="Sơ đồ khối hệ thống ESP32-S3 Smartwatch" width="800">
+</p>
 
-        LoopI2C --> ExDia{Có tập thể dục không?}
-        ExDia -- Đ --> GPS[Xử lý GPS] --> LoopI2C
-        ExDia -- S --> WifiDia{Có kết nối WiFi không?}
-        WifiDia -- Đ --> Wifi[Xử lý WiFi] --> LoopI2C
-        WifiDia -- S --> BleDia{Có kết nối BLE không?}
-        BleDia -- Đ --> Ble[Xử lý BLE] --> LoopI2C
-        BleDia -- S --> OtaDia{Có OTA không?}
-        OtaDia -- Đ --> Ota[Xử lý OTA] --> LoopI2C
-        OtaDia -- S --> LoopI2C
-    end
+### 🔀 Lưu đồ giải thuật chính (Main Algorithm Flowchart)
 
-    %% ===== CORE 1: UI / touch / screen state =====
-    subgraph C1["Core 1 — UI, Touch & Screen State"]
-        Core1 --> RTC[Cập nhật RTC và dữ liệu chạy nền]
-        RTC --> Touch1[Xử lý cảm ứng]
-        Touch1 --> Alarm[Kiểm tra báo thức]
-        Alarm --> WakeCheck[Kiểm tra tín hiệu mở màn hình]
-        WakeCheck --> WakeDia{Có tín hiệu mở màn hình?}
-        WakeDia -- S --> RTC
-        WakeDia -- Đ --> Standby[Vẽ và xử lý màn hình chờ]
-
-        Standby --> TouchDia{Có tín hiệu cảm ứng màn hình?}
-        TouchDia -- Đ --> EnterRecent[Thao tác cảm ứng để vào<br/>màn hình gần nhất]
-        TouchDia -- S --> OffDia1{Có tín hiệu tắt màn hình?}
-        OffDia1 -- S --> OffCheck[Kiểm tra tín hiệu tắt màn hình] --> OffDia1
-        OffDia1 -- Đ --> RTC
-
-        EnterRecent --> FirstOpen{Smartwatch có phải<br/>lần đầu mở không?}
-        FirstOpen -- S --> DrawRecent[Vẽ và xử lý màn hình gần nhất] --> PowerCheck[Kiểm tra tín hiệu tắt nguồn]
-        FirstOpen -- Đ --> DrawMain[Vẽ và xử lý màn hình chính]
-        DrawMain --> PowerCheck
-        DrawSub[Vẽ và xử lý màn hình phụ] --> PowerCheck
-
-        PowerCheck --> OffDia2{Có tín hiệu tắt màn hình?}
-        OffDia2 -- Đ --> OffDia1
-        OffDia2 -- S --> TouchCheck2[Kiểm tra tín hiệu cảm ứng màn hình]
-
-        TouchCheck2 --> IsMain{Là màn hình chính?}
-        TouchCheck2 --> ActionReq[Thao tác cảm ứng theo yêu cầu] --> PowerCheck
-
-        IsMain -- Đ --> DrawSub
-        IsMain -- S --> Relay[Thao tác chuyển tiếp theo yêu cầu]
-        Relay --> TransDia{Có tín hiệu chuyển tiếp màn hình?}
-        TransDia -- Đ --> DrawSub
-        TransDia -- S --> TouchCheck2
-    end
-```
+<p align="center">
+  <img src="img/hinh4.png" alt="Lưu đồ giải thuật chính ESP32-S3 Smartwatch" width="800">
+</p>
 
 ### 1. Boot & Task Split
 * `app_main.c` initializes NVS/SPIFFS and hardware once at boot.
